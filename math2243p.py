@@ -4,7 +4,7 @@
 #although numpy has many things preprogrammed, I am only using:
 #array: creates a numpy array (matrix). Simplifies row opperations significantly from generic Python.
 #random: Used to test these functions against random matricies. 
-from numpy import array,random,zeros #only basic things imported from numpy
+from numpy import array,random,zeros,delete #only basic things imported from numpy
 from math import gcd
 from fractions import Fraction as frac
 
@@ -75,8 +75,35 @@ def rref(matrix,dtype='frac',prec=5): #reduced row echelon form
             a[yc,xc] = 1#sets leading coefficient to one, now that we have divided the rest of the row.
     return a
 
+def minor(arr,row,col):#returns minors
+    return delete(delete(arr,row,0),col,1)
+
+#determinant(slow)
+def slowdet(arr):
+    if len(arr[0]) != len(arr):
+        raise Exception('Must be square matrix')
+    if len(arr)==2:
+        return arr[0,0]*arr[1,1]-arr[1,0]*arr[0,1]
+    ret = 0
+    for col in range(0,len(arr[0])):
+        ret+=(-1)**col*arr[0,col]*slowdet(minor(arr,0,col))
+    return ret
 
 
+a= array([[1, 2, 3,5],
+       [4, 5, 6,1],
+       [-2, 3, 1,1],
+       [7, 8, 10,0]])
+print(slowdet(a))
+
+
+
+
+
+
+
+
+#Work in progress
 #variables, separated by commas in a string, (spaces/no spaces, or as tuple)
 #(vars muust be single letter, with an optional number following)
 #list of equations (as strings)
