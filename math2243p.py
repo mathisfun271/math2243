@@ -90,18 +90,6 @@ def slowdet(arr):
     return ret
 
 
-a= array([[1, 2, 3,5],
-       [4, 5, 6,1],
-       [-2, 3, 1,1],
-       [7, 8, 10,0]])
-print(slowdet(a))
-
-
-
-
-
-
-
 
 #Work in progress
 #variables, separated by commas in a string, (spaces/no spaces, or as tuple)
