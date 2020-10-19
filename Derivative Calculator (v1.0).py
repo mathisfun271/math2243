@@ -1,4 +1,7 @@
 #differential equations
+from math import gcd,log,exp,sin,cos,tan,asin,acos,atan,pi
+from fractions import Fraction as frac
+
 
 def isnum(var):
     if str(type(var)) == "<class '__main__.f.const'>":
