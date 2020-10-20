@@ -1,8 +1,3 @@
-#differential equations
-from math import gcd,log,exp,sin,cos,tan,asin,acos,atan,pi
-from fractions import Fraction as frac
-
-
 def isnum(var):
     if str(type(var)) == "<class '__main__.f.const'>":
         return True
@@ -19,6 +14,17 @@ def parens(s):
             return s.toStr()
         else:
             return '(%s)' % s.toStr()
+
+def mparens(s):
+    if str(type(s)) == "<class '__main__.f.var'>":
+        return s.toStr()
+    elif str(type(s)) == "<class '__main__.f.pow'>":
+        if str(type(s.base)) == "<class '__main__.f.var'>":
+            return s.toStr()
+        else:
+            return '(%s)' % s.toStr()
+    else:
+        return '(%s)' % s.toStr()
         
 def tofconst(var):
     if type(var) == int or type(var) == float or str(type(var)) == "<class 'fractions.Fraction'>":
@@ -60,6 +66,11 @@ class f:
             if type(args[0]) == list: self.p = args[0]
             else: self.p = list(args)
             self.p[:] = [tofconst(x) for x in self.p]
+            for el in self.p:
+                if el.toStr()=='0':
+                    self.p.remove(el)
+            if len(self.p) == 0:
+                self.p = [f.const(0)]
 
         def der(self):
             ret = []
@@ -80,6 +91,15 @@ class f:
             if type(args[0])== list: self.p = args[0]
             else: self.p = list(args)
             self.p[:] = [tofconst(x) for x in self.p]
+            for el in self.p:
+                if isnum(el):
+                    if el.c == 0:
+                        self.p = [f.const(0)]
+                    if el.c == 1:
+                        self.p.remove(el)
+            if len(self.p) == 0:
+                self.p = [f.const(1)]
+            
 
         def der(self):
             funcs = []
@@ -104,11 +124,11 @@ class f:
                 if isnum(x):
                     mult*=x.c
                 else:
-                    funcs.append(parens(x))
+                    funcs.append(mparens(x))
             if mult == 1 and len(funcs)>0:
-                return '*'.join(funcs)
+                return ''.join(funcs)
             else:
-                return '*'.join([str(mult)]+funcs)
+                return ''.join([str(mult)]+funcs)
 
         def evalu(self,val):
             ret = 1
@@ -172,7 +192,10 @@ class f:
             if isnum(self.power) and isnum(self.base):
                 return f.const(0)
             elif isnum(self.power):
-                return f.prod(self.power,self.base.der(),f.pow(self.base,f.const(self.power.c-1)))
+                if self.power.c == 2:
+                    return f.prod(self.power,self.base.der(),self.base)
+                else:
+                    return f.prod(self.power,self.base.der(),f.pow(self.base,f.const(self.power.c-1)))
             elif isnum(self.base):
                 if self.base.c<0: raise Exception('negative exponential base')
                 return f.prod(f.ln(self.base),self.power.der(),f.pow(self.base,self.power))
@@ -445,7 +468,7 @@ def fparse(s, var='x'):
     
 
 def derWT():
-    print('Derivative Calculator in Python by Nathan Mihm with ~500 lines of code\nMake sure to include parenthesis to prevent the parser from getting confused\n')
+    print('Derivative Calculator in Python by Nathan Mihm\nMake sure to include parenthesis to prevent the parser from getting confused\n')
     while True:
         fstring = input('f(x) = ')
         fparsed = fparse(fstring)
@@ -455,5 +478,5 @@ def derWT():
         print('f\'(x) = %s' % fparsed.der().toStr() )
         if input('Press enter for another, or e to exit loop ') == 'e':
             break
-            
+
 derWT()
